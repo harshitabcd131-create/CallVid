@@ -1,7 +1,7 @@
 
 import { Inngest } from "inngest";
 import { connectDb } from "./db.js";
-import User from "../models/User.js";
+import User from "../models/user.model.js";
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "call-vid" });
 const syncUser = inngest.createFunction(
