@@ -1,9 +1,14 @@
+import "../instrument.mjs";//importing this file will initialize sentry for error monitoring and performance monitoring
 import express from "express";
 import { ENV } from "./config/env.js";
 import { connectDb } from "./config/db.js";
 import { clerkMiddleware } from '@clerk/express'
 import { serve } from "inngest/express";
 import { functions, inngest } from "./config/inngest.js";   
+import chatRoutes from "./routes/chat.route.js";
+
+import * as Sentry from "@sentry/node"
+
 
 const app =express();
 
@@ -11,11 +16,20 @@ app.use(express.json())//middleware to parse json data in request body
 
 app.use(clerkMiddleware())//req auth will be available in the request object
 
-app.use("/api/inngest", serve({ client: inngest, functions }));
+app.use("/debug-sentry", (req, res) => {
+    throw new Error("Sentry error test");
+  });
 
 app.get("/",(req,res)=> {
     res.send("hello worldl")
 });
+
+app.use("/api/inngest", serve({ client: inngest, functions }));
+
+app.use("/api/chat",chatRoutes);
+
+Sentry.setupExpressErrorHandler(app);
+
 
 
 const startServer=async()=>{
@@ -35,3 +49,4 @@ const startServer=async()=>{
 startServer();
 
 export default app;
+
