@@ -16,9 +16,11 @@ app.use(express.json())//middleware to parse json data in request body
 
 app.use(clerkMiddleware())//req auth will be available in the request object
 
-app.use("/debug-sentry", (req, res) => {
-    throw new Error("Sentry error test");
-  });
+if (process.env.NODE_ENV !== "production") {
+    app.get("/debug-sentry", (req, res) => {
+        throw new Error("Sentry error test");
+    });
+}
 
 app.get("/",(req,res)=> {
     res.send("hello worldl")
