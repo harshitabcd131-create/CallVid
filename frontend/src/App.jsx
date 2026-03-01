@@ -2,7 +2,7 @@ import React from 'react'
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/clerk-react'
 import{Routes,Route, Navigate} from 'react-router'
 import AuthPage from './pages/AuthPage'
-import HomePage from './pages/Homepage'
+import HomePage from './pages/HomePage'
 
 const App = () => {
   return (
@@ -12,7 +12,8 @@ const App = () => {
           
           <Routes>
             <Route path='/' element ={<HomePage />} />
-            <Route path='/' element={<Navigate to={"/"} replace/>}/>
+            {/* Catch-all route for unknown paths */}
+            <Route path='*' element={<Navigate to={"/"} replace/>}/>
           </Routes>
         </SignedIn>
         

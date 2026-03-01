@@ -9,12 +9,12 @@ const AuthPage = () => {
             <div className='auth-left'>
                 <div className='auth-hero'>
                     <div className='brand-container'>
-                        <img src="logo.png" alt="Slap" className='brand-logo' />
+                        <img src="/logo.png" alt="Slap" className='brand-logo' />
                         <span className='brand-name'>Slap</span>
                     </div>
                     <h1 className="hero-title">Where work happens ✨</h1>
                     <p className='hero-subtitle'>
-                        Connect with your team instantly through secure ,real-time messaging .Experience
+                        Connect with your team instantly through secure, real-time messaging. Experience
                         seamless collaboration and stay productive no matter where you are.
                     </p>
                     <div className='features-list'>
@@ -45,7 +45,7 @@ const AuthPage = () => {
             </div>
             <div className='auth-right'>
                 <div className='auth-image-container'>
-                <img src="/auth-i.png" alt="Team Collabration"  className='auth-image'/>
+                <img src="/auth-i.png" alt="Team Collaboration"  className='auth-image'/>
                 <div className='image-overlay'></div>
                 </div>
             </div>
