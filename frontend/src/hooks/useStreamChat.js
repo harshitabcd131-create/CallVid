@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { StreamChat } from "stream-chat";
 import { useUser } from "@clerk/clerk-react";
+import { useQuery } from "@tanstack/react-query";
 import { generateToken } from "../lib/api";
 import * as Sentry from "@sentry/react";
-
 export const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 
 //this hook is used to connect the user to stream chat api
@@ -18,29 +18,26 @@ export const useStreamChat = () => {
 
     const { data: tokenData, isLoading: tokenLoading, error: tokenError } = useQuery({
             queryKey: ["streamToken"],
-            qureyFn: generateToken,
+            queryFn: generateToken,
             enabled: !!user?.id,//this will take the object and convert it to boolean 
-
-
         })
-
      //init stream chat client    
      useEffect(()=>{
+       
+       let localClient = null;
        const initChat = async()=>{
         if(!tokenData?.token || !user ) return;
 
         try{
-           const client = StreamChat.getInstance(STREAM_API_KEY);
-           await client.connectUser({
+           localClient = StreamChat.getInstance(STREAM_API_KEY);
+           await localClient.connectUser({
              id: user.id,
              name: user.fullName,
              image: user.imageUrl
-           })
-           setChatClient(client)
-
-        }catch(error){
-          console.log("error connecting to stream chat",error)
-          Sentry.captureException(error,{
+           }, tokenData.token);
+           setChatClient(localClient);
+        } catch(error){
+           Sentry.captureException(error,{
             tags:{component:"useStreamChat"},
             extra:{
                 context:"Stream_chat_connection",
@@ -55,10 +52,10 @@ export const useStreamChat = () => {
        }
 
        initChat();
-       //cleanu function to disconnect the chat client when the component unmounts or when the user changes
-       return()=>{if (chatClient) chatClient.disconnectUser()}
+       //cleanup function to disconnect the chat client when the component unmounts or when the user changes
+       return()=>{if (localClient) localClient.disconnectUser()}
        
-     },[tokenData,user,chatClient])
+     },[tokenData,user])
 
      return{chatClient, isLoading: tokenLoading, error: tokenError}
 }
