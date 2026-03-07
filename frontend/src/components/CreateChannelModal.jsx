@@ -260,8 +260,7 @@ const CreateChannelModal = ({  onClose }) => {
             users.map(user =>(
               <label key={user.id} className="member-item">
                 <input type="checkbox"
-                checked = {selectedMembers.includes(users.id)}
-                onChange={()=> handleMemberToggle(user.id)}
+                checked={selectedMembers.includes(user.id)}                onChange={()=> handleMemberToggle(user.id)}
                 className="member-checkbox" />
                 {user.image ? (    
                 <img src={user.image} alt={user.name || user.id} className="member-avatar" />
