@@ -1,7 +1,7 @@
 import { Inngest } from "inngest";
 import { connectDb } from "./db.js";
 import { User } from "../models/user.model.js";
-import { upsertStreamUser, deleteStreamUser } from "./stream.js";
+import { upsertStreamUser, deleteStreamUser, addUsersToPublicChannels } from "./stream.js";
 
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "call-vid" });
@@ -28,6 +28,8 @@ const syncUser = inngest.createFunction(
       name: newUser.name,
       image: newUser.image,
     })
+
+    await addUsersToPublicChannels(newUser.clerkId.toString());
   }
 );
 

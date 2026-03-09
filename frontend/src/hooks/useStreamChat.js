@@ -16,7 +16,7 @@ export const useStreamChat = () => {
 
     //fetch stream token using react-query
 
-    const { data: tokenData, isLoading: tokenLoading, error: tokenError } = useQuery({
+    const { data: tokenData, isLoading, error } = useQuery({
             queryKey: ["streamToken"],
             queryFn: generateToken,
             enabled: !!user?.id,//this will take the object and convert it to boolean 
@@ -57,5 +57,5 @@ export const useStreamChat = () => {
        
      },[tokenData,user])
 
-     return{chatClient, isLoading: tokenLoading, error: tokenError}
+     return{chatClient, isLoading, error}
 }
