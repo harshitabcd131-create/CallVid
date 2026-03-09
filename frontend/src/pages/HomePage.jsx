@@ -61,15 +61,20 @@ const HomePage = () => {
               {/* CHANNEL LIST */}
               <div className='team-channel-list__content'>
                 <div className="create-channel-section">
-                  <button onClick={()=> setIsCreateModalOpen(true)} className='create-channel-btn'>
-                    <PlusIcon className='size-4'/>
+                  <button onClick={() => setIsCreateModalOpen(true)} className='create-channel-btn'>
+                    <PlusIcon className='size-4' />
                     <span>Create Channel</span>
                   </button>
                 </div>
                 {/* CHANNEL LIST */}
 
                 <ChannelList
-                  filters={{ members: { $in: [chatClient?.user?.id] } }}
+                  filters={{
+                    $or: [
+                      { members: { $in: [chatClient.user.id] } },
+                      { visibility: "public" }
+                    ],
+                  }}
                   options={{ state: true, watch: true }}
                   Preview={({ channel }) => (
                     <CustomChannelPreview
@@ -86,7 +91,7 @@ const HomePage = () => {
                           <span>Channels</span>
                         </div>
                       </div>
-                     {/* add better components instead of plane text */}
+                      {/* add better components instead of plane text */}
                       {loading && <div className="loading-message">Loading channels...</div>}
                       {error && <div className="error-message">Error loading channels</div>}
 
@@ -95,11 +100,11 @@ const HomePage = () => {
 
                       <div className="section-header direct-messages">
                         <div className="section-title">
-                          <UsersIcon className='size-4'/>
+                          <UsersIcon className='size-4' />
                           <span>Direct Messages</span>
                         </div>
                       </div>
-                      <UsersList activeChannel={activeChannel}/>
+                      <UsersList activeChannel={activeChannel} />
                     </div>
                   )}
                 />
@@ -112,16 +117,16 @@ const HomePage = () => {
             <Channel channel={activeChannel}>
               <Window>
                 {/* <CustomChannelHeader/> */}
-                <MessageList/>
-                <MessageInput/>
+                <MessageList />
+                <MessageInput />
 
               </Window>
 
-              <Thread/>
+              <Thread />
             </Channel>
           </div>
         </div>
-        {isCreateModalOpen &&(<CreateChannelModal isOpen={isCreateModalOpen} onClose={()=> setIsCreateModalOpen(false)}/>)}
+        {isCreateModalOpen && (<CreateChannelModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />)}
       </Chat>
     </div>
   )

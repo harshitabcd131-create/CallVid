@@ -17,7 +17,7 @@ const CustomChannelPreview = ({ channel, setActiveChannel, activeChannel }) => {
           : ""
       }`}
     >
-      <HashIcon className="w-4 h-4 text-[#9b9b9b] mr-2" />
+       <HashIcon className="w-4 h-4 text-[#9b9b9b] mr-2" />
       <span className="str-chat__channel-preview-messenger-name flex-1">{channel.data.id}</span>
 
       {unreadCount > 0 && (
