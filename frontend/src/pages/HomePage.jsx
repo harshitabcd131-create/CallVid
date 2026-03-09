@@ -50,8 +50,9 @@ const HomePage = () => {
     setJoiningChannelId(channelId);
 
     try {
+      await axiosInstance.post("/api/chat/join", { channelId });
+
       const channel = chatClient.channel("messaging", channelId);
-      await channel.addMembers([userId]);
       await channel.watch();
       setActiveChannel(channel);
       setSearchParams({ channel: channelId });

@@ -45,11 +45,15 @@ export const getPublicChannels = async ({ limit = 20, offset = 0 } = {}) => {
 };
 
 export const addUsersToPublicChannels = async (newUserId) => {
-   
-    const publicChannels = await streamClient.queryChannels({ discoverable: true});
-    for(const channel of publicChannels){
-        await channel.addMembers([newUserId])
-    }
+  const publicChannels = await streamClient.queryChannels({ discoverable: true });
+  for (const channel of publicChannels) {
+    await channel.addMembers([newUserId]);
+  }
+};
 
-}
+export const addUserToChannel = async (channelId, userId) => {
+  const channel = streamClient.channel("messaging", channelId);
+  await channel.addMembers([userId]);
+  return channel;
+};
 
