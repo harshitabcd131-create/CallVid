@@ -128,7 +128,7 @@ const CreateChannelModal = ({  onClose }) => {
 
       } else {
         channelData.visibility = "public"
-        channelData.discoverable = true; //its a custom field that we add and we will use it later
+        channelData.discoverable = true; 
       }
 
       const channel = client.channel("messaging", channelId, channelData)
