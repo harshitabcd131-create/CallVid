@@ -25,6 +25,7 @@ const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const { chatClient, isLoading, error } = useStreamChat();
+  const userId = chatClient?.user?.id;
 
   //set the active channel based on the url search params
   useEffect(() => {
@@ -69,12 +70,16 @@ const HomePage = () => {
                 {/* CHANNEL LIST */}
 
                 <ChannelList
-                  filters={{
-                    $or: [
-                      { members: { $in: [chatClient.user.id] } },
-                      { visibility: "public" }
-                    ],
-                  }}
+                  filters={
+                    userId
+                      ? {
+                          $or: [
+                            { members: { $in: [userId] } },
+                            { visibility: "public" },
+                          ],
+                        }
+                      : { visibility: "public" }
+                  }
                   options={{ state: true, watch: true }}
                   Preview={({ channel }) => (
                     <CustomChannelPreview
