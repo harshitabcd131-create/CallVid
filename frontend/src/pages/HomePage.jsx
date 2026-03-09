@@ -33,17 +33,15 @@ const HomePage = () => {
     data: publicChannels = [],
     isLoading: isLoadingPublicChannels,
     refetch: refetchPublicChannels,
-  } = useQuery(
-    ["publicChannels"],
-    async () => {
+  } = useQuery({
+    queryKey: ["publicChannels"],
+    queryFn: async () => {
       const response = await axiosInstance.get("/api/chat/public-channels");
       return response.data.channels || [];
     },
-    {
-      enabled: !!userId,
-      staleTime: 1000 * 60 * 5,
-    }
-  );
+    enabled: !!userId,
+    staleTime: 1000 * 60 * 5,
+  });
 
   const [joiningChannelId, setJoiningChannelId] = useState(null);
 
