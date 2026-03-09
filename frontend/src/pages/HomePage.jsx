@@ -1,7 +1,9 @@
 import { UserButton } from '@clerk/clerk-react'
 import React, { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router'
 import { useStreamChat } from '../hooks/useStreamChat';
+import { axiosInstance } from '../lib/axios';
 import PageLoader from '../components/PageLoader';
 import CreateChannelModal from '../components/CreateChannelModal';
 import "../styles/stream-chat-theme.css"
@@ -27,6 +29,42 @@ const HomePage = () => {
   const { chatClient, isLoading, error } = useStreamChat();
   const userId = chatClient?.user?.id;
 
+  const {
+    data: publicChannels = [],
+    isLoading: isLoadingPublicChannels,
+    refetch: refetchPublicChannels,
+  } = useQuery(
+    ["publicChannels"],
+    async () => {
+      const response = await axiosInstance.get("/api/chat/public-channels");
+      return response.data.channels || [];
+    },
+    {
+      enabled: !!userId,
+      staleTime: 1000 * 60 * 5,
+    }
+  );
+
+  const [joiningChannelId, setJoiningChannelId] = useState(null);
+
+  const handleJoinChannel = async (channelId) => {
+    if (!chatClient || !userId) return;
+    setJoiningChannelId(channelId);
+
+    try {
+      const channel = chatClient.channel("messaging", channelId);
+      await channel.addMembers([userId]);
+      await channel.watch();
+      setActiveChannel(channel);
+      setSearchParams({ channel: channelId });
+      refetchPublicChannels();
+    } catch (err) {
+      console.error("Error joining public channel", err);
+    } finally {
+      setJoiningChannelId(null);
+    }
+  };
+
   //set the active channel based on the url search params
   useEffect(() => {
     if (chatClient) {
@@ -40,7 +78,7 @@ const HomePage = () => {
   }, [chatClient, searchParams]);
   //todo handle this with better component 
   if (error) return <p>Something went wrong...</p>;
-  if (isLoading || !chatClient) return <PageLoader />;
+  if (isLoading || !chatClient || !chatClient.user?.id) return <PageLoader />;
 
   return (
     <div className='chat-wrapper'>
@@ -67,19 +105,46 @@ const HomePage = () => {
                     <span>Create Channel</span>
                   </button>
                 </div>
+
+                <div className="public-channels-section">
+                  <div className="section-header">
+                    <div className="section-title">
+                      <HashIcon className="size-4" />
+                      <span>Discover</span>
+                    </div>
+                  </div>
+
+                  {isLoadingPublicChannels ? (
+                    <div className="loading-message">Loading public channels...</div>
+                  ) : publicChannels.length === 0 ? (
+                    <div className="empty-message">No public channels found</div>
+                  ) : (
+                    <div className="channels-list">
+                      {publicChannels.map((channel) => (
+                        <div key={channel.id} className="public-channel-row">
+                          <div className="public-channel-info">
+                            <span className="public-channel-name">{channel.name}</span>
+                            {channel.member_count != null && (
+                              <span className="public-channel-meta">{channel.member_count} members</span>
+                            )}
+                          </div>
+                          <button
+                            className="btn btn-secondary btn-small"
+                            onClick={() => handleJoinChannel(channel.id)}
+                            disabled={joiningChannelId === channel.id}
+                          >
+                            {joiningChannelId === channel.id ? "Joining…" : "Join"}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 {/* CHANNEL LIST */}
 
                 <ChannelList
-                  filters={
-                    userId
-                      ? {
-                          $or: [
-                            { members: { $in: [userId] } },
-                            { visibility: "public" },
-                          ],
-                        }
-                      : { visibility: "public" }
-                  }
+                  filters={{ members: { $in: [userId] } }}
                   options={{ state: true, watch: true }}
                   Preview={({ channel }) => (
                     <CustomChannelPreview

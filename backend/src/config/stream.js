@@ -35,6 +35,15 @@ export const generateStreamToken = (userId) => {
     }
 };
 
+export const getPublicChannels = async ({ limit = 20, offset = 0 } = {}) => {
+  const response = await streamClient.queryChannels(
+    { visibility: "public", discoverable: true },
+    { last_message_at: -1 },
+    { limit, offset }
+  );
+  return response;
+};
+
 export const addUsersToPublicChannels = async (newUserId) => {
    
     const publicChannels = await streamClient.queryChannels({ discoverable: true});

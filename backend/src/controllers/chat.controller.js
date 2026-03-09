@@ -1,4 +1,4 @@
-import { generateStreamToken } from "../config/stream.js";
+import { generateStreamToken, getPublicChannels } from "../config/stream.js";
 
 export const getStreamToken = async(req,res)=>{
     try{
@@ -12,3 +12,20 @@ export const getStreamToken = async(req,res)=>{
         })
     }
 }
+
+export const getPublicChannelsController = async (req, res) => {
+  try {
+    const channels = await getPublicChannels();
+    const sanitized = channels.map((channel) => ({
+      id: channel.id,
+      name: channel.data?.name || channel.id,
+      member_count: channel.member_count,
+      last_message_at: channel.last_message_at,
+    }));
+
+    res.status(200).json({ channels: sanitized });
+  } catch (error) {
+    console.error("error fetching public channels", error);
+    res.status(500).json({ message: "Failed to fetch public channels" });
+  }
+};
