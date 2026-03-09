@@ -47,7 +47,7 @@ const UsersList = ({activeChannel}) => {
       }catch(error){
         console.log("Error creating DM",error)
         Sentry.captureException(error,{
-          tags:{component: "UsersLIst"},
+          tags:{component: "UsersList"},
           extra:{
             context: "create_direct_message",
             targetUserId: targetUser?.id,
