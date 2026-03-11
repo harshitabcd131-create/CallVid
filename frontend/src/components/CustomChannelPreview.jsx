@@ -7,6 +7,7 @@ const CustomChannelPreview = ({ channel, setActiveChannel, activeChannel }) => {
   if (isDM) return null;
 
   const unreadCount = channel.countUnread();
+  const displayName = channel.data?.name || channel.data?.id;
 
   return (
     <button
@@ -17,8 +18,8 @@ const CustomChannelPreview = ({ channel, setActiveChannel, activeChannel }) => {
           : ""
       }`}
     >
-       <HashIcon className="w-4 h-4 text-[#9b9b9b] mr-2" />
-      <span className="str-chat__channel-preview-messenger-name flex-1">{channel.data.id}</span>
+      <HashIcon className="w-4 h-4 text-[#9b9b9b] mr-2" />
+      <span className="str-chat__channel-preview-messenger-name flex-1">{displayName}</span>
 
       {unreadCount > 0 && (
         <span className="flex items-center justify-center ml-2 size-4 text-xs rounded-full bg-red-500 text-white ">

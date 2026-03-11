@@ -35,6 +35,10 @@ export const generateStreamToken = (userId) => {
     }
 };
 
+export class ChannelNotFoundError extends Error {}
+export class ChannelNotPublicError extends Error {}
+export class ChannelJoinForbiddenError extends Error {}
+
 export const getPublicChannels = async ({ limit = 20, offset = 0 } = {}) => {
   const response = await streamClient.queryChannels(
     { visibility: "public", discoverable: true },
@@ -45,15 +49,52 @@ export const getPublicChannels = async ({ limit = 20, offset = 0 } = {}) => {
 };
 
 export const addUsersToPublicChannels = async (newUserId) => {
-  const publicChannels = await streamClient.queryChannels({ discoverable: true });
-  for (const channel of publicChannels) {
-    await channel.addMembers([newUserId]);
+  try {
+    const publicChannels = await streamClient.queryChannels(
+      { visibility: "public", discoverable: true },
+      { last_message_at: -1 },
+      { limit: 100 }
+    );
+    for (const channel of publicChannels) {
+      await channel.addMembers([newUserId]);
+    }
+  } catch (error) {
+    console.error("error adding user to public channels", error);
+    throw error;
+  }
+};
+
+export const getChannelById = async (channelId) => {
+  const channel = streamClient.channel("messaging", channelId);
+  try {
+    await channel.query({ watch: false, state: false });
+    return channel;
+  } catch (err) {
+    const msg = String(err?.message || "").toLowerCase();
+    if (msg.includes("not found") || msg.includes("does not exist")) {
+      throw new ChannelNotFoundError();
+    }
+    throw err;
   }
 };
 
 export const addUserToChannel = async (channelId, userId) => {
-  const channel = streamClient.channel("messaging", channelId);
-  await channel.addMembers([userId]);
-  return channel;
+  const channel = await getChannelById(channelId);
+  const visibility = channel.data?.visibility;
+
+  if (visibility !== "public") {
+    throw new ChannelNotPublicError();
+  }
+
+  try {
+    await channel.addMembers([userId]);
+    return channel;
+  } catch (err) {
+    const msg = String(err?.message || "").toLowerCase();
+    if (err?.status === 403 || msg.includes("not allowed") || msg.includes("forbidden")) {
+      throw new ChannelJoinForbiddenError(err?.message || "Forbidden");
+    }
+    throw err;
+  }
 };
 

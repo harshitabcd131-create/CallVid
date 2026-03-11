@@ -1,4 +1,11 @@
-import { generateStreamToken, getPublicChannels, addUserToChannel } from "../config/stream.js";
+import {
+  generateStreamToken,
+  getPublicChannels,
+  addUserToChannel,
+  ChannelNotFoundError,
+  ChannelNotPublicError,
+  ChannelJoinForbiddenError,
+} from "../config/stream.js";
 
 export const getStreamToken = async(req,res)=>{
     try{
@@ -26,6 +33,17 @@ export const getPublicChannelsController = async (req, res) => {
     res.status(200).json({ channels: sanitized });
   } catch (error) {
     console.error("error fetching public channels", error);
+    if (error instanceof ChannelNotFoundError) {
+      return res.status(404).json({ message: "Channel not found" });
+    }
+
+    if (error instanceof ChannelNotPublicError) {
+      return res.status(403).json({ message: "Channel is not public" });
+    }
+
+    if (error instanceof ChannelJoinForbiddenError) {
+      return res.status(403).json({ message: "Not allowed to join channel" });
+    }
     res.status(500).json({ message: "Failed to fetch public channels" });
   }
 };
