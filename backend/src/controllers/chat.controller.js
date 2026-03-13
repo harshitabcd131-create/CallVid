@@ -33,12 +33,9 @@ export const getPublicChannelsController = async (req, res) => {
     res.status(200).json({ channels: sanitized });
   } catch (error) {
     console.error("error fetching public channels", error);
-  } catch (error) {
-    console.error("error fetching public channels", error);
-    res.status(500).json({ message: "Failed to fetch public channels" });
-  }    res.status(500).json({ message: "Failed to fetch public channels" });
-  }
-};
+  } res.status(500).json({ message: "Failed to fetch public channels" });
+}
+
 
 export const joinPublicChannel = async (req, res) => {
   try {
