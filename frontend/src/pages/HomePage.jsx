@@ -19,6 +19,7 @@ import {
   Window,
 } from 'stream-chat-react';
 import { HashIcon, PlusIcon, UsersIcon } from 'lucide-react';
+import CustomChannelHeader from '../components/CustomChannelHeader';
 
 
 const HomePage = () => {
@@ -185,7 +186,7 @@ const HomePage = () => {
           <div className="chat-main">
             <Channel channel={activeChannel}>
               <Window>
-                {/* <CustomChannelHeader/> */}
+                <CustomChannelHeader/>
                 <MessageList />
                 <MessageInput />
 
