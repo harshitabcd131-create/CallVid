@@ -22,10 +22,11 @@ function PinnedMessagesModal({ pinnedMessages, onClose }) {
                 className="w-9 h-9 rounded-full object-cover mt-1"
               />
 
-              <div className="text-sm font-medium text-gray-700 mb-1">{msg.user.name}</div>
-              <div className="text-base text-gray-900 whitespace-pre-line">{msg.text}</div>
-            </div>
-          ))}
+              <div className="flex-1">
+                <div className="text-sm font-medium text-gray-700 mb-1">{msg.user.name}</div>
+                <div className="text-base text-gray-900 whitespace-pre-line">{msg.text}</div>
+              </div>
+            </div>          ))}
 
           {pinnedMessages.length === 0 && (
             <div className="text-center text-gray-500 py-8">No pinned messages</div>

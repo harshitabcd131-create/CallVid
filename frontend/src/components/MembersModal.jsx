@@ -14,7 +14,7 @@ function MembersModal({ members, onClose }) {
 
         {/* MEMBERS LIST */}
         <div className="px-6 py-4 max-h-96 overflow-y-auto">
-          {members.map((member) => (
+          {members?.map((member) => (
             <div
               key={member.user.id}
               className="flex items-center gap-3 py-3 border-b border-gray-200 last:border-b-0"

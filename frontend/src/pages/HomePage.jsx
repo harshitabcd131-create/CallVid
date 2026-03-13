@@ -58,8 +58,8 @@ const HomePage = () => {
       setActiveChannel(channel);
       setSearchParams({ channel: channelId });
       refetchPublicChannels();
-    } catch (err) {
-      console.error("Error joining public channel", err);
+    } catch (error) {
+      console.error("Error joining public channel", error);
     } finally {
       setJoiningChannelId(null);
     }

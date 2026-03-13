@@ -21,7 +21,7 @@ const CustomChannelHeader = () => {
 
 
   const otherUser = Object.values(channel.state.members).filter(
-    (member) => member.user.id != user.id
+    (member) => member.user.id !== user.id
   )
 
   const isDM = channel.data?.member_count === 2 && channel.data?.id.includes("user_");
