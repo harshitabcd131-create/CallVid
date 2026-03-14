@@ -1,10 +1,11 @@
-import axios from 'axios';
-//https://call-vid.vercel.app/
+import axios from "axios";
 
-// const BASE_URL= import.meta.env.MODE==="development" ? "http://localhost:5001" : "https://call-vid.vercel.app/"
+// Normalize the API base to avoid double "/api" in requests.
+const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
+const trimmedBaseUrl = rawBaseUrl.replace(/\/+$/, "");
+const normalizedBaseUrl = trimmedBaseUrl.replace(/\/api$/i, "");
 
-const BASE_URL=import.meta.env.VITE_API_BASE_URL
- export const axiosInstance = axios.create({
-    baseURL: BASE_URL,
-    withCredentials: true
- })
+export const axiosInstance = axios.create({
+  baseURL: normalizedBaseUrl || undefined,
+  withCredentials: true,
+});
