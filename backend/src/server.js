@@ -12,10 +12,39 @@ import * as Sentry from "@sentry/node"
 
 const app =express();
 
-app.use(express.json())//middleware to parse json data in request body
-app.use(cors({origin:ENV.CLIENT_URL,credentials:true}))//middleware to enable CORS for the frontend application running on port 5173, and allow credentials like cookies to be sent in cross-origin requests
+app.use(express.json()); // middleware to parse json data in request body
 
-app.use(clerkMiddleware())//req auth will be available in the request object
+// CORS setup
+// - We allow the configured CLIENT_URL (production frontend)
+// - We also allow localhost for local dev
+// - We support Vercel preview deployments (which use dynamic subdomains)
+const normalizeOrigin = (origin) => origin?.replace(/\/+$/, "");
+const allowedOrigins = [
+  normalizeOrigin(ENV.CLIENT_URL),
+  "http://localhost:5173",
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // allow non-browser requests (e.g., Postman, server-to-server)
+      if (!origin) return callback(null, true);
+
+      const normalized = normalizeOrigin(origin);
+
+      // allow configured origins
+      if (allowedOrigins.includes(normalized)) return callback(null, true);
+
+      // allow Vercel preview domains (dynamic subdomains)
+      if (normalized?.endsWith(".vercel.app")) return callback(null, true);
+
+      callback(new Error(`CORS policy: origin ${origin} not allowed`));
+    },
+    credentials: true,
+  })
+); // enable CORS for frontend (with credentials)
+
+app.use(clerkMiddleware()); // req auth will be available in the request object
 
 if (process.env.NODE_ENV !== "production") {
     app.get("/debug-sentry", (req, res) => {
