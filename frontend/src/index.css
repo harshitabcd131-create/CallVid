@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+/* Ensure Stream Video UI text is white (e.g., call controls / settings) */
+.str-video {
+  --str-video__text-color1: #ffffff;
+  --str-video__text-color2: rgba(255, 255, 255, 0.85);
+  --str-video__text-color3: rgba(255, 255, 255, 0.7);
+  --str-video__text-color4: rgba(255, 255, 255, 0.6);
+}
+
+/* Optional: force any remaining Stream Video text to white */
+.str-video,
+.str-video * {
+  color: #ffffff !important;
+}
