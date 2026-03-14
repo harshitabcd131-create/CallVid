@@ -13,7 +13,7 @@ import * as Sentry from "@sentry/node"
 const app =express();
 
 app.use(express.json())//middleware to parse json data in request body
-app.use(cors({origin:"http://localhost:5173",credentials:true}))//middleware to enable CORS for the frontend application running on port 5173, and allow credentials like cookies to be sent in cross-origin requests
+app.use(cors({origin:ENV.CLIENT_URL,credentials:true}))//middleware to enable CORS for the frontend application running on port 5173, and allow credentials like cookies to be sent in cross-origin requests
 
 app.use(clerkMiddleware())//req auth will be available in the request object
 
