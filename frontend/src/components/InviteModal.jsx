@@ -78,7 +78,7 @@ const InviteModal = ({ channel, onClose }) => {
                             >
                                 <input
                                     type="checkbox"
-                                    className="checkbox checbox-primary checkbox-sm accent-[#611f69]"
+                                    className="checkbox checkbox-primary checkbox-sm accent-[#611f69]"
                                     value={user.id}
                                     onChange={(e) => {
                                         if (e.target.checked) setSelectedMembers([...selectedMembers, user.id]);

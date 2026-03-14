@@ -41,11 +41,14 @@ const CallPage = () => {
   })
 
   useEffect(() => {
+    let videoClient = null;
+    let callInstance = null;
+
     const initCall = async () => {
-      if (!tokenData.token || !user || !callId) return
+      if (!tokenData?.token || !user || !callId) return
       
       try {
-        const videoClient = new StreamVideoClient({
+        videoClient = new StreamVideoClient({
           apiKey: STREAM_API_KEY,
           user: {
             id: user.id,
@@ -56,14 +59,14 @@ const CallPage = () => {
           token: tokenData.token
         })
         
-        const callInstance = videoClient.call("default", callId)
+        callInstance = videoClient.call("default", callId)
         await callInstance.join({ create: true })
 
         setClient(videoClient)
         setCall(callInstance)
 
       } catch (error) {
-        console.log("Error init call:",error)
+        console.error("Error init call:", error)
         toast.error("Cannot connect to the call")
       }finally{
         setIsConnecting(false);
@@ -71,8 +74,16 @@ const CallPage = () => {
     }
 
     initCall()
-  }, [tokenData,user,callId])
 
+    return () => {
+      if (callInstance) {
+        callInstance.leave().catch(console.error);
+      }
+      if (videoClient) {
+        videoClient.disconnectUser().catch(console.error);
+      }
+    };
+  }, [tokenData,user,callId])
   if(isConnecting || !isLoaded){
     return <div className="h-screen flex justify-center items-center">
       Connecting to Call....
@@ -80,7 +91,7 @@ const CallPage = () => {
   }
 
   return (
-   <div className="h-screen flex flex-col items-cneter justify-center bg-gray-100">
+   <div className="h-screen flex flex-col items-center justify-center bg-gray-100">
     <div className="relative w-full max-w-4xl mx-auto">
       {client && call ? (
         <StreamVideo client={client}>
@@ -108,8 +119,7 @@ const CallContent = () =>{
 
 useEffect(() => {
   if (callingState === CallingState.LEFT) {
-    navigate("/", { replace: true });
-    window.location.reload();
+    window.location.href = "/";
   }
 }, [callingState, navigate]);
     return(

@@ -20,28 +20,34 @@ const CustomChannelHeader = () => {
   const [pinnedMessages, setPinnedMessages] = useState([]);
 
 
-  const otherUser = Object.values(channel.state.members).filter(
+  const otherUser = Object.values(channel.state.members).find(
     (member) => member.user.id !== user.id
   )
 
   const isDM = channel.data?.member_count === 2 && channel.data?.id.includes("user_");
 
   const handlePinnedMessages = async () => {
-    const channelState = await channel.query();
-    setPinnedMessages(channelState.pinned_messages);
-    setShowPinnedMessages(true);
+    try {
+      const channelState = await channel.query();
+      setPinnedMessages(channelState.pinned_messages || []);
+      setShowPinnedMessages(true);
+    } catch (error) {
+      console.error("Failed to fetch pinned messages:", error);
+    }
   }
 
   const handleVideoCall = async () => {
     if (channel) {
       const callUrl = `${window.location.origin}/call/${channel.id}`;
-      await channel.sendMessage({
-        text: `I have started a video call . Join me here:${callUrl}`
-
-      })
+      try {
+        await channel.sendMessage({
+          text: `I have started a video call. Join me here: ${callUrl}`
+        });
+      } catch (error) {
+        console.error("Failed to send video call message:", error);
+      }
     }
-  }
-  return (
+  }  return (
 
     <div className="h-14 border-b border-gray-200 flex items-center px-4 justify-between bg-white">
       <div className="flex items-center gap-3">
