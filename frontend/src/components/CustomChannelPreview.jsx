@@ -7,7 +7,7 @@ const CustomChannelPreview = ({ channel, setActiveChannel, activeChannel }) => {
   if (isDM) return null;
 
   const unreadCount = channel.countUnread();
-  const displayName = channel.data?.name || channel.data?.id;
+  const displayName =  channel.data.id;
 
   return (
     <button
