@@ -10,7 +10,7 @@ const AuthPage = () => {
                 <div className='auth-hero'>
                     <div className='brand-container'>
                         <img src="/logo.png" alt="Slap" className='brand-logo' />
-                        <span className='brand-name'>Slap</span>
+                        <span className='brand-name'>CallVid</span>
                     </div>
                     <h1 className="hero-title">Where work happens ✨</h1>
                     <p className='hero-subtitle'>
